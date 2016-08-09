@@ -12,8 +12,8 @@ public class Broadcaster {
 	public Broadcaster() throws SocketException {
 		m_Broadcaster = new DatagramSocket();	
 		m_Broadcaster.setBroadcast(true);
-		m_Port = 12345;
-		m_Message = new String("Hi, mouse server!");
+		m_Port = 8989;
+		m_Message = new String("Hi, desktop!");
 	}
 	
 	public void SetPort(int Port) {

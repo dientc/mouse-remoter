@@ -3,9 +3,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class Remoter {
+public class Desktop {
 	public static void main(String[] args) throws IOException, InterruptedException, AWTException {
 		Broadcaster speaker = new Broadcaster();
 		DesktopServer server = new DesktopServer();
@@ -24,14 +25,16 @@ public class Remoter {
 					}
 				}				
 			};
-			executor.scheduleAtFixedRate(periodicTask, 0, 1, TimeUnit.SECONDS);
+			ScheduledFuture<?> result = executor.scheduleWithFixedDelay(periodicTask, 0, 200, TimeUnit.MILLISECONDS);
 
 			Socket clientConn = server.ListenForRemoter();
-			executor.shutdown();
-
+			System.out.println("Established to client!");
+			result.cancel(true);
+			
 			try {
-				server.DataTransferAndExecute(clientConn);
+				server.ReceiveDatanExecute(clientConn);
 			} catch(IOException i) {
+				//System.out.println("Exeception, Continue loop!");
 				continue;
 			}			
 		}
