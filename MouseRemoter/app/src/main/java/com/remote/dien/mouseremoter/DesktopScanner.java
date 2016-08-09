@@ -4,7 +4,10 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Vector;
 
 public class DesktopScanner {
@@ -34,12 +37,14 @@ public class DesktopScanner {
 
 			String message = new String(packet.getData(), 0, packet.getLength());
 			Log.d("Scanner ", packet.getAddress().getHostAddress() + " : " + message);
-			if(message.toLowerCase().indexOf("desktop") != -1)
-			{
-				remoteAddrs.add(packet.getAddress().getHostAddress());
-			}
+			//if(message.toLowerCase().indexOf("desktop") != -1)
+			//{
+			remoteAddrs.add(packet.getAddress().getHostAddress());
+			//}
 			
 			// Stop when catching to 10 units. HARDCODE
+
+			Log.d("size", Integer.toString(remoteAddrs.size()));
 			if (remoteAddrs.size() == 10) {
 				break;
 			}

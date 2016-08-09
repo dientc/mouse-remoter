@@ -11,7 +11,7 @@ import java.net.*;
 
 import javax.xml.bind.DatatypeConverter;
 
-public class DesktopServer {
+public class TcpServer {
 	private int m_Port;
 	private ServerSocket m_Server;
 	private String m_PrivateKey;
@@ -19,7 +19,7 @@ public class DesktopServer {
 	Dimension m_ScreenSize;
 	int[] m_Ordinators; // [0] Ox, [1] Oy
 	
-	public DesktopServer() throws IOException, AWTException {
+	public TcpServer() throws IOException, AWTException {
 		m_Port = 8080;
 		m_PrivateKey = new String("vyvanveo");
 		m_Server = new ServerSocket(m_Port);

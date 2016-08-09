@@ -7,13 +7,11 @@ public class Broadcaster {
 	
 	private DatagramSocket m_Broadcaster;
 	private int m_Port;
-	private String m_Message;
 	
 	public Broadcaster() throws SocketException {
 		m_Broadcaster = new DatagramSocket();	
 		m_Broadcaster.setBroadcast(true);
 		m_Port = 8989;
-		m_Message = new String("Hi, desktop!");
 	}
 	
 	public void SetPort(int Port) {
@@ -25,8 +23,10 @@ public class Broadcaster {
         DatagramPacket dgramPacket = new DatagramPacket(data, data.length);
         dgramPacket.setAddress(InetAddress.getByAddress(new byte[] { (byte) 255, (byte) 255, (byte) 255, (byte) 255 }));
         dgramPacket.setPort(m_Port);
-        System.out.println(m_Message);
-        data = m_Message.getBytes();
+        
+		String message = System.getProperty("user.name");
+        System.out.println(message);
+        data = message.getBytes();
         dgramPacket.setData(data);
 
         m_Broadcaster.send(dgramPacket);

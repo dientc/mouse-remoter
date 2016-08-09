@@ -9,7 +9,9 @@ import java.util.concurrent.TimeUnit;
 public class Desktop {
 	public static void main(String[] args) throws IOException, InterruptedException, AWTException {
 		Broadcaster speaker = new Broadcaster();
-		DesktopServer server = new DesktopServer();
+		// TcpServer server = new TcpServer();
+		UdpServer server = new UdpServer();
+		
 		for(;;) {
 			ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 			Runnable periodicTask = new Runnable() {
@@ -27,6 +29,8 @@ public class Desktop {
 			};
 			ScheduledFuture<?> result = executor.scheduleWithFixedDelay(periodicTask, 0, 200, TimeUnit.MILLISECONDS);
 
+			/*
+			// Use Tcp Server
 			Socket clientConn = server.ListenForRemoter();
 			System.out.println("Established to client!");
 			result.cancel(true);
@@ -36,7 +40,19 @@ public class Desktop {
 			} catch(IOException i) {
 				//System.out.println("Exeception, Continue loop!");
 				continue;
-			}			
+			}	
+			*/
+			// Use Udp Server for speeding up.
+			if(true == server.ListenForRemoter()) {
+				System.out.println("Established to client!");
+				result.cancel(true);
+			}
+			try {
+				server.ReceiveDatanExecute();
+			} catch(IOException i) {
+				//System.out.println("Exeception, Continue loop!");
+				continue;
+			}	
 		}
 	}
 }

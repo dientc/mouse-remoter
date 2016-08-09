@@ -20,11 +20,13 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
     Vector m_Desktops;
-    PhoneClient m_Client = null;
+    UdpClient m_Client = null;
+    boolean m_IsConnected = false;
     byte[] m_Payload;
     int[] m_StartPointMoved;
     int[] m_StartPointClicked;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent Event) {
-        if (null != m_Client) {
+        if (m_IsConnected) {
             int x = (int)Event.getX();
             int y = (int)Event.getY();
             int eventaction = Event.getAction();
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     m_Payload[3] = (byte)((distance[1] >> 8) & 0xFF);
                     m_Payload[4] = (byte)(distance[1] & 0xFF);
                     SendPayload();
-                    //Log.d("Touch", "Move");
+                    Log.d("Touch", "Move");
                 }
                 case MotionEvent.ACTION_UP:
                 {
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         if (m_PushDownCounter % 2 == 0) {
                             m_Payload[0] = Utilities.CLICK;
                             SendPayload();
-                            //Log.d("Touch", "Click");
+                            Log.d("Touch", "Click");
                         }
                     }
                 } break;
@@ -97,20 +99,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        /*
-        try {
-            m_Client.Close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
+
+        m_Payload[0] = Utilities.GOODBYE;
+        SendPayload();
     }
 
     @Override
@@ -162,12 +161,16 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             Utilities.PrepareData(m_Payload);
             try {
-                m_Client = new PhoneClient(m_Desktops.get(0).toString()); // HARDCODE 0 to choose a destop to pair.
+                m_Client = new UdpClient();
+                m_IsConnected = m_Client.Connect(m_Desktops.get(0).toString());// HARDCODE 0 to choose a destop to pair.
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
-                m_Client.Send(m_Payload);
+                if (m_IsConnected) {
+                    Log.d("Connecting", "True");
+                    m_Client.Send(m_Payload);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 try {
@@ -182,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            //
         }
     }
 
